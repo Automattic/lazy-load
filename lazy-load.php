@@ -50,6 +50,11 @@ class LazyLoad_Images {
 		if( is_feed() || is_preview() )
 			return $content;
 
+		$no_lazyload_key = apply_filters( 'no_lazyload_key', 'no-lazyload' );
+
+		if( false !== strpos( $content, $no_lazyload_key ) )
+			return $content;
+
 		// Don't lazy-load if the content has already been run through previously
 		if ( false !== strpos( $content, 'data-lazy-src' ) )
 			return $content;
