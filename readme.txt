@@ -3,7 +3,7 @@ Contributors: batmoo, automattic, jakemgold, 10up
 Tags: lazy load, images, front-end optimization
 Requires at least: 3.2
 Tested up to: 4.3
-Stable tag: 0.6
+Stable tag: 0.6.1
 
 Lazy load images to improve page load times and server bandwidth. Images are loaded only when visible to the user.
 
@@ -57,6 +57,10 @@ if ( function_exists( 'lazyload_images_add_placeholders' ) )
 This will lazy load <em>all</em> your images.
 
 == Changelog ==
+
+= 0.6.1 =
+
+* Security: XSS fix (reported by <a href="https://klikki.fi/">Jouko Pynnöne</a>
 
 = 0.6 =
 
