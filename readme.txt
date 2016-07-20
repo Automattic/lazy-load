@@ -2,7 +2,7 @@
 Contributors: batmoo, automattic, jakemgold, 10up
 Tags: lazy load, images, front-end optimization
 Requires at least: 3.2
-Tested up to: 4.3
+Tested up to: 4.5
 Stable tag: 0.6.1
 
 Lazy load images to improve page load times and server bandwidth. Images are loaded only when visible to the user.
