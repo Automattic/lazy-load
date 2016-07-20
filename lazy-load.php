@@ -54,13 +54,45 @@ class LazyLoad_Images {
 		if ( false !== strpos( $content, 'data-lazy-src' ) )
 			return $content;
 
+		// This is a pretty simple regex, but it works
+		$content = preg_replace_callback( '#<(img)([^>]+?)(>(.*?)</\\1>|[\/]?>)#si', array( __CLASS__, 'process_image' ), $content );
+
+		return $content;
+	}
+
+	static function process_image( $matches ) {
 		// In case you want to change the placeholder image
 		$placeholder_image = apply_filters( 'lazyload_images_placeholder_image', self::get_url( 'images/1x1.trans.gif' ) );
 
-		// This is a pretty simple regex, but it works
-		$content = preg_replace( '#<img([^>]+?)src=[\'"]?([^\'"\s>]+)[\'"]?([^>]*)>#', sprintf( '<img${1}src="%s" data-lazy-src="${2}"${3}><noscript><img${1}src="${2}"${3}></noscript>', $placeholder_image ), $content );
+		$old_attributes_str = $matches[2];
+		$old_attributes = wp_kses_hair( $old_attributes_str, wp_allowed_protocols() );
 
-		return $content;
+		if ( empty( $old_attributes['src'] ) ) {
+			return $matches[0];
+		}
+
+		$image_src = $old_attributes['src']['value'];
+
+		// Remove src and lazy-src since we manually add them
+		$new_attributes = $old_attributes;
+		unset( $new_attributes['src'], $new_attributes['data-lazy-src'] );
+
+		$new_attributes_str = self::build_attributes_string( $new_attributes );
+
+		return sprintf( '<img src="%1$s" data-lazy-src="%2$s" %3$s><noscript>%4$s</noscript>', esc_url( $placeholder_image ), esc_url( $image_src ), $new_attributes_str, $matches[0] );
+	}
+
+	private static function build_attributes_string( $attributes ) {
+		$string = array();
+		foreach ( $attributes as $name => $attribute ) {
+			$value = $attribute['value'];
+			if ( '' === $value ) {
+				$string[] = sprintf( '%s', $name );
+			} else {
+				$string[] = sprintf( '%s="%s"', $name, esc_attr( $value ) );
+			}
+		}
+		return implode( ' ', $string );
 	}
 
 	static function is_enabled() {
