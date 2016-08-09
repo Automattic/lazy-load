@@ -17,7 +17,8 @@
 
 	function lazy_load_image( img ) {
 		var $img = jQuery( img ),
-			src = $img.attr( 'data-lazy-src' );
+			src = $img.attr( 'data-lazy-src' ),
+			srcset = $img.attr( 'data-lazy-srcset' );
 
 		if ( ! src || 'undefined' === typeof( src ) )
 			return;
@@ -26,6 +27,11 @@
 			.hide()
 			.removeAttr( 'data-lazy-src' )
 			.attr( 'data-lazy-loaded', 'true' );
+
+		if ( 'undefined' !== typeof( srcset ) && srcset ) {
+			$img.removeAttr( 'data-lazy-srcset' );
+			img.srcset = srcset;
+		}
 
 		img.src = src;
 		$img.fadeIn();
