@@ -17,13 +17,22 @@
 
 	function lazy_load_image( img ) {
 		var $img = jQuery( img ),
-			src = $img.attr( 'data-lazy-src' );
+			src = $img.attr( 'data-lazy-src' ),
+			srcset = $img.attr( 'data-lazy-srcset' ),
+			sizes = $img.attr( 'data-lazy-sizes' );
 
 		if ( ! src || 'undefined' === typeof( src ) )
 			return;
 
+		if ( 'undefined' !== typeof( srcset ) && srcset ) {
+			$img.removeAttr( 'data-lazy-srcset' );
+			$img.removeAttr( 'data-lazy-sizes' );
+			img.sizes = sizes;
+			img.srcset = srcset;
+		}
+
 		$img.unbind( 'scrollin' ) // remove event binding
-			.hide()
+			// .hide() // Flickering looks bad
 			.removeAttr( 'data-lazy-src' )
 			.attr( 'data-lazy-loaded', 'true' );
 
