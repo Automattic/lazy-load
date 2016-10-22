@@ -35,7 +35,10 @@ class LazyLoad_Images {
 		add_filter( 'the_content', array( __CLASS__, 'add_image_placeholders' ), 99 ); // run this later, so other content filters have run, including image_add_wh on WP.com
 		add_filter( 'post_thumbnail_html', array( __CLASS__, 'add_image_placeholders' ), 11 );
 		add_filter( 'get_avatar', array( __CLASS__, 'add_image_placeholders' ), 11 );
-		add_filter( 'wp_kses_allowed_html', array( __CLASS__, 'allowed_post_tags' ), 10, 2 );
+
+		if ( apply_filters( 'lazy_load_kses_allowed_html', false ) ) {
+			add_filter( 'wp_kses_allowed_html', array( __CLASS__, 'allowed_post_tags' ), 10, 2 );
+		}
 	}
 
 	static function add_scripts() {
