@@ -76,11 +76,12 @@ class LazyLoad_Images {
 
 		// Remove src and lazy-src since we manually add them
 		$new_attributes = $old_attributes;
-		unset( $new_attributes['src'], $new_attributes['data-lazy-src'] );
+		$new_attributes['src'] = $placeholder_image;
+		$new_attributes['data-lazy-src'] = $image_src;
 
 		$new_attributes_str = self::build_attributes_string( $new_attributes );
 
-		return sprintf( '<img src="%1$s" data-lazy-src="%2$s" %3$s><noscript>%4$s</noscript>', esc_url( $placeholder_image ), esc_url( $image_src ), $new_attributes_str, $matches[0] );
+		return sprintf( '<img %1$s><noscript>%2$s</noscript>', $new_attributes_str, $matches[0] );
 	}
 
 	private static function get_placeholder_image() {
