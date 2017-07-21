@@ -71,6 +71,7 @@ class LazyLoad_Images {
 			return $matches[0];
 		}
 
+		$placeholder_image = self::get_placeholder_image();
 		$image_src = $old_attributes['src']['value'];
 
 		// Remove src and lazy-src since we manually add them
@@ -80,6 +81,10 @@ class LazyLoad_Images {
 		$new_attributes_str = self::build_attributes_string( $new_attributes );
 
 		return sprintf( '<img src="%1$s" data-lazy-src="%2$s" %3$s><noscript>%4$s</noscript>', esc_url( $placeholder_image ), esc_url( $image_src ), $new_attributes_str, $matches[0] );
+	}
+
+	private static function get_placeholder_image() {
+		return apply_filters( 'lazyload_images_placeholder_image', self::get_url( 'images/1x1.trans.gif' ) );
 	}
 
 	private static function build_attributes_string( $attributes ) {
