@@ -6,7 +6,7 @@
  * Text Domain: lazy-load
  *
  * Code by the WordPress.com VIP team, TechCrunch 2011 Redesign team, and Jake Goldman (10up LLC).
- * Uses jQuery.sonar by Dave Artz (AOL): http://www.artzstudio.com/files/jquery-boston-2010/jquery.sonar/ 
+ * Uses jQuery.sonar by Dave Artz (AOL): http://www.artzstudio.com/files/jquery-boston-2010/jquery.sonar/
  *
  * License: GPL2
  */
@@ -65,19 +65,30 @@ class LazyLoad_Images {
 		$placeholder_image = apply_filters( 'lazyload_images_placeholder_image', self::get_url( 'images/1x1.trans.gif' ) );
 
 		$old_attributes_str = $matches[2];
-		$old_attributes = wp_kses_hair( $old_attributes_str, wp_allowed_protocols() );
+		$old_attributes_kses_hair = wp_kses_hair( $old_attributes_str, wp_allowed_protocols() );
 
-		if ( empty( $old_attributes['src'] ) ) {
+		if ( empty( $old_attributes_kses_hair['src'] ) ) {
 			return $matches[0];
 		}
 
-		$placeholder_image = self::get_placeholder_image();
-		$image_src = $old_attributes['src']['value'];
-
-		// Remove src and lazy-src since we manually add them
+		$old_attributes = self::flatten_kses_hair_data( $old_attributes_kses_hair );
 		$new_attributes = $old_attributes;
-		$new_attributes['src'] = $placeholder_image;
-		$new_attributes['data-lazy-src'] = $image_src;
+
+		// Set placeholder and lazy-src
+		$new_attributes['src'] = self::get_placeholder_image();
+		$new_attributes['data-lazy-src'] = $old_attributes['src'];
+
+		// Handle `srcset`
+		if ( ! empty( $new_attributes['srcset'] ) ) {
+			$new_attributes['data-lazy-srcset'] = $old_attributes['srcset'];
+			unset( $new_attributes['srcset'] );
+		}
+
+		// Handle `sizes`
+		if ( ! empty( $new_attributes['sizes'] ) ) {
+			$new_attributes['data-lazy-sizes'] = $old_attributes['sizes'];
+			unset( $new_attributes['sizes'] );
+		}
 
 		$new_attributes_str = self::build_attributes_string( $new_attributes );
 
@@ -88,10 +99,17 @@ class LazyLoad_Images {
 		return apply_filters( 'lazyload_images_placeholder_image', self::get_url( 'images/1x1.trans.gif' ) );
 	}
 
+	private static function flatten_kses_hair_data( $attributes ) {
+		$flattened_attributes = array();
+		foreach ( $attributes as $name => $attribute ) {
+			$flattened_attributes[ $name ] = $attribute['value'];
+		}
+		return $flattened_attributes;
+	}
+
 	private static function build_attributes_string( $attributes ) {
 		$string = array();
-		foreach ( $attributes as $name => $attribute ) {
-			$value = $attribute['value'];
+		foreach ( $attributes as $name => $value ) {
 			if ( '' === $value ) {
 				$string[] = sprintf( '%s', $name );
 			} else {
