@@ -35,6 +35,9 @@ class LazyLoad_Images {
 		add_filter( 'the_content', array( __CLASS__, 'add_image_placeholders' ), 99 ); // run this later, so other content filters have run, including image_add_wh on WP.com
 		add_filter( 'post_thumbnail_html', array( __CLASS__, 'add_image_placeholders' ), 11 );
 		add_filter( 'get_avatar', array( __CLASS__, 'add_image_placeholders' ), 11 );
+        ?>
+        <noscript><style type="text/css">.lazy { display:none; }</style></noscript>
+        <?php
 	}
 
 	static function add_scripts() {
@@ -67,7 +70,7 @@ class LazyLoad_Images {
 
 	static function process_image( $matches ) {
 		// In case you want to change the placeholder image
-		$placeholder_image = apply_filters( 'lazyload_images_placeholder_image', self::get_url( 'images/1x1.trans.gif' ) );
+		$placeholder_image = apply_filters( 'lazyload_images_placeholder_image', self::get_url( 'images/1x1.trans.gif' ), $matches );
 
 		$old_attributes_str = $matches[2];
 		$old_attributes = wp_kses_hair( $old_attributes_str, wp_allowed_protocols() );
@@ -78,13 +81,17 @@ class LazyLoad_Images {
 
 		$image_src = $old_attributes['src']['value'];
 
-		// Remove src and lazy-src since we manually add them
-		$new_attributes = $old_attributes;
-		unset( $new_attributes['src'], $new_attributes['data-lazy-src'] );
+        // Also retain the srcset, and sizes if present. The latter is to keep w3c validator happy (sizes requires srcset)
+        $lazy_srcset_attribute = ( ! empty( $old_attributes['srcset'] ) ) ? 'data-lazy-srcset="' . $old_attributes['srcset']['value'] . '"' : '';
+        $lazy_sizes_attribute = ( ! empty( $old_attributes['sizes'] ) ) ? 'data-lazy-sizes="' . $old_attributes['sizes']['value'] . '"' : '';
+        // Remove src, lazy-src, srcset, lazy-srcset, sizes and data-lazy-sizes since we manually add them
+        $new_attributes = $old_attributes;
+        $css_class = $new_attributes['class'] ? $new_attributes['class']['value'].' lazy' : 'lazy';
+        unset( $new_attributes['src'], $new_attributes['data-lazy-src'], $new_attributes['srcset'], $new_attributes['data-lazy-srcset'], $new_attributes['sizes'], $new_attributes['data-lazy-sizes'], $new_attributes['class'] );
 
 		$new_attributes_str = self::build_attributes_string( $new_attributes );
-
-		return sprintf( '<img src="%1$s" data-lazy-src="%2$s" %3$s><noscript>%4$s</noscript>', esc_url( $placeholder_image ), esc_url( $image_src ), $new_attributes_str, $matches[0] );
+        $placeholder_url = strpos($placeholder_image, 'data:') == 0 ? $placeholder_image : esc_url( $placeholder_image );
+        return sprintf( '<img src="%1$s" class="%2$s" data-lazy-src="%3$s" %4$s %5$s %6$s><noscript>%7$s</noscript>', $placeholder_url , $css_class, esc_url( $image_src ), $lazy_srcset_attribute, $lazy_sizes_attribute, $new_attributes_str, $matches[0] );
 	}
 
 	private static function build_attributes_string( $attributes ) {
