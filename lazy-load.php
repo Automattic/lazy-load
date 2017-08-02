@@ -50,6 +50,11 @@ class LazyLoad_Images {
 		if( is_feed() || is_preview() )
 			return $content;
 
+		// Don't lazyload for amp-wp content
+		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			return $content;
+		}
+
 		// Don't lazy-load if the content has already been run through previously
 		if ( false !== strpos( $content, 'data-lazy-src' ) )
 			return $content;
