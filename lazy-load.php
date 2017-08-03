@@ -35,6 +35,10 @@ class LazyLoad_Images {
 		add_filter( 'the_content', array( __CLASS__, 'add_image_placeholders' ), 99 ); // run this later, so other content filters have run, including image_add_wh on WP.com
 		add_filter( 'post_thumbnail_html', array( __CLASS__, 'add_image_placeholders' ), 11 );
 		add_filter( 'get_avatar', array( __CLASS__, 'add_image_placeholders' ), 11 );
+
+		if ( apply_filters( 'lazy_load_kses_allowed_html', false ) ) {
+			add_filter( 'wp_kses_allowed_html', array( __CLASS__, 'allowed_post_tags' ), 10, 2 );
+		}
 	}
 
 	static function add_scripts() {
@@ -127,6 +131,14 @@ class LazyLoad_Images {
 
 	static function get_url( $path = '' ) {
 		return plugins_url( ltrim( $path, '/' ), __FILE__ );
+	}
+
+	public function allowed_post_tags( $allowedposttags, $context ) {
+		if ( 'post' === $context && ! empty( $allowedposttags['img'] ) ) {
+			$allowedposttags['img']['data-lazy-src'] = true;
+			$allowedposttags['noscript'] = array();
+		}
+		return $allowedposttags;
 	}
 }
 
