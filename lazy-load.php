@@ -66,9 +66,6 @@ class LazyLoad_Images {
 	}
 
 	static function process_image( $matches ) {
-		// In case you want to change the placeholder image
-		$placeholder_image = apply_filters( 'lazyload_images_placeholder_image', self::get_url( 'images/1x1.trans.gif' ) );
-
 		$old_attributes_str = $matches[2];
 		$old_attributes_kses_hair = wp_kses_hair( $old_attributes_str, wp_allowed_protocols() );
 
