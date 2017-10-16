@@ -34,7 +34,6 @@ class LazyLoad_Images {
 	static function setup_filters() {
 		add_filter( 'the_content', array( __CLASS__, 'add_image_placeholders' ), 99 ); // run this later, so other content filters have run, including image_add_wh on WP.com
 		add_filter( 'post_thumbnail_html', array( __CLASS__, 'add_image_placeholders' ), 11 );
-		add_filter( 'get_avatar', array( __CLASS__, 'add_image_placeholders' ), 11 );
 	}
 
 	static function add_scripts() {
