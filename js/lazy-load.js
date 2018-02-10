@@ -7,6 +7,10 @@
 			lazy_load_image( this );
 		});
 
+		$( 'img.exclude-lazy-load' ).each( function() {
+			lazy_load_image(this);
+		});
+
 		// We need to force load gallery images in Jetpack Carousel and give up lazy-loading otherwise images don't show up correctly
 		$( '[data-carousel-extra]' ).each( function() {
 			$( this ).find( 'img[data-lazy-src]' ).each( function() {
