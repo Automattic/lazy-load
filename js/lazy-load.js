@@ -7,6 +7,7 @@
 			lazy_load_image( this );
 		});
 
+		// Force load images with the class 'exclude-lazy-load'. Users can add the class to an image and the image will load directly.
 		$( 'img.exclude-lazy-load' ).each( function() {
 			lazy_load_image(this);
 		});
