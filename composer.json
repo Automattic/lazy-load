@@ -1,0 +1,13 @@
+{
+  "name": "automattic/lazy-load",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "description": "Lazy load images to improve page load times and server bandwidth. Images are loaded only when visible to the user.",
+  "homepage": "https://github.com/Automattic/lazy-load",
+  "support": {
+    "issues": "https://github.com/Automattic/lazy-load/issues"
+  },
+  "require": {
+    "composer/installers": "~1.0"
+  }
+}
