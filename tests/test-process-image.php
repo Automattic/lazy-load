@@ -8,16 +8,7 @@
 /**
  * Sample test case.
  */
-class LazyLoad__Process_Image__Test extends WP_UnitTestCase {
-	function setUp() {
-		parent::setUp();
-
-		add_filter( 'lazyload_images_placeholder_image', array( $this, 'override_placeholder' ) );
-	}
-
-	function override_placeholder() {
-		return 'placeholder.jpg';
-	}
+class LazyLoad__Tests extends LazyLoad__TestCase {
 
 	function get_test_data() {
 		return array(
