@@ -1,8 +1,8 @@
 {
 	"name": "automattic/lazy-load",
+	"type": "wordpress-plugin",
 	"description": "Lazy load images to improve page load times and server bandwidth. Images are loaded only when visible to the user.",
 	"homepage": "https://github.com/Automattic/lazy-load/",
-	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
@@ -10,13 +10,9 @@
 			"homepage": "https://automattic.com/"
 		}
 	],
-	"support": {
-		"issues": "https://github.com/Automattic/lazy-load/issues",
-		"source": "https://github.com/Automattic/lazy-load"
-	},
 	"require": {
-		"composer/installers": "~1.0",
-		"php": ">=5.6"
+		"php": ">=5.6",
+		"composer/installers": "~1.0"
 	},
 	"require-dev": {
 		"automattic/vipwpcs": "^2.2",
@@ -29,6 +25,9 @@
 		"yoast/phpunit-polyfills": "^0.2.0"
 	},
 	"scripts": {
+		"cbf": [
+			"@php ./vendor/bin/phpcbf"
+		],
 		"coverage": [
 			"@php ./vendor/bin/phpunit --coverage-html ./build/coverage-html"
 		],
@@ -37,9 +36,6 @@
 		],
 		"cs": [
 			"@php ./vendor/bin/phpcs"
-		],
-		"cbf": [
-			"@php ./vendor/bin/phpcbf"
 		],
 		"lint": [
 			"@php ./vendor/php-parallel-lint/php-parallel-lint/parallel-lint . -e php --exclude vendor --exclude .git"
@@ -57,5 +53,9 @@
 			"@putenv WP_MULTISITE=1",
 			"@composer test"
 		]
+	},
+	"support": {
+		"issues": "https://github.com/Automattic/lazy-load/issues",
+		"source": "https://github.com/Automattic/lazy-load"
 	}
 }
